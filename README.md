@@ -327,7 +327,50 @@ BenchmarkSnowflakeGenerate-12     4,362,130    275 ns/op    0 B/op    0 allocs/o
 
 ## 🤝 Contributing
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTING.md) and follow our [conventional commit format](docs/CONVENTIONAL_COMMITS.md) for automatic versioning.
+
+### Quick Start for Contributors
+
+1. **Fork and clone** the repository
+2. **Create a feature branch**: `git checkout -b feat/amazing-feature`
+3. **Make your changes** following the code style
+4. **Write tests** for your changes
+5. **Commit using conventional format**: `git commit -m "feat: add amazing feature"`
+6. **Push to your fork**: `git push origin feat/amazing-feature`
+7. **Open a Pull Request** with a clear description
+
+### Commit Message Format
+
+We use [Conventional Commits](https://www.conventionalcommits.org/) for automatic versioning:
+
+```bash
+# Feature (minor version bump)
+git commit -m "feat: add ULID support"
+
+# Bug fix (patch version bump)
+git commit -m "fix: resolve race condition"
+
+# Breaking change (major version bump)
+git commit -m "feat!: change API signature"
+```
+
+See [docs/CONVENTIONAL_COMMITS.md](docs/CONVENTIONAL_COMMITS.md) for detailed guidelines.
+
+## 🚀 Versioning
+
+This project uses [Semantic Versioning](https://semver.org/) with automated releases:
+
+- **Commits drive versioning**: Your commit messages determine version bumps
+- **Automatic releases**: Push to main triggers GitHub Actions
+- **Changelog generation**: Auto-generated from commit messages
+- **GitHub releases**: Created automatically with release notes
+
+See [docs/VERSIONING.md](docs/VERSIONING.md) for complete details.
+
+### Current Version
+
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/brmorillo/go-lib-id)](https://github.com/brmorillo/go-lib-id/releases/latest)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/brmorillo/go-lib-id)](https://github.com/brmorillo/go-lib-id/tags)
 
 ## 📄 License
 
@@ -338,6 +381,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Documentation](https://pkg.go.dev/github.com/brmorillo/go-lib-id)
 - [Issues](https://github.com/brmorillo/go-lib-id/issues)
 - [Releases](https://github.com/brmorillo/go-lib-id/releases)
+- [Discussions](https://github.com/brmorillo/go-lib-id/discussions)
 
 ## 🌟 Acknowledgments
 

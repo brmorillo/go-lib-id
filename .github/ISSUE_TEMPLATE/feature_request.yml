@@ -1,0 +1,79 @@
+name: Feature Request
+description: Suggest an idea for this project
+title: "[FEATURE] "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature!
+        
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: A clear and concise description of what the problem is.
+      placeholder: I'm always frustrated when...
+    validations:
+      required: false
+      
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution you'd like
+      description: A clear and concise description of what you want to happen.
+      placeholder: I would like to see...
+    validations:
+      required: true
+      
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+      description: A clear and concise description of any alternative solutions or features you've considered.
+      placeholder: I have also considered...
+    validations:
+      required: false
+      
+  - type: dropdown
+    id: id-type
+    attributes:
+      label: Which ID type is this related to?
+      multiple: true
+      options:
+        - Snowflake
+        - UUID v4
+        - UUID v7
+        - ULID (planned)
+        - KSUID (planned)
+        - CUID (planned)
+        - NanoID (planned)
+        - xid (planned)
+        - ShortID (planned)
+        - Sonyflake (planned)
+        - New ID type
+        - General/API
+    validations:
+      required: false
+      
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Are you willing to contribute?
+      description: Would you be interested in contributing this feature?
+      options:
+        - label: I would be willing to implement this feature
+          required: false
+        - label: I would be willing to help test this feature
+          required: false
+        - label: I would be willing to write documentation for this feature
+          required: false
+          
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add any other context, code examples, or screenshots about the feature request here.
+      placeholder: Any additional information...
+    validations:
+      required: false

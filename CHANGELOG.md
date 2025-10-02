@@ -7,61 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Nothing yet
+### 🚀 Features
+- Refactor API from NewSnowflake() to New() for cleaner interface
+- Add comprehensive documentation following Go conventions
+- Move examples from cmd/* to examples/* following Go conventions
+- Translate all examples and comments to English
 
-### Changed
-- Nothing yet
+### 📚 Documentation
+- Add detailed examples and parameter descriptions for all methods
+- Update README with new API usage and examples section
+- Add professional-grade documentation for public library
 
-### Fixed
-- Nothing yet
+### ♻️ Code Refactoring
+- Maintain backward compatibility with deprecated NewSnowflake() functions
+- Improve code organization and structure
 
-## [1.0.0] - 2025-10-02
+### ✅ Tests
+- All tests passing (35 tests) with new API
+- Update test files to use new API naming
 
-### Added
-- **Snowflake ID Generator** - Discord/Twitter format (64-bit)
-  - Process ID (0-31) and Worker ID (0-31) support
-  - ~4.1M IDs per millisecond capacity
-  - Batch generation support
-  - Component extraction (timestamp, process, worker, sequence)
-  - Global API for simplified usage
-  - Comprehensive test suite (100% coverage)
-  - Performance: ~275 ns/op with 0 allocations
+### 🏗️ Build System
+- Update Makefile with new examples paths
+- Add automated versioning with semantic-release
+- Configure GitHub Actions for CI/CD
 
-- **UUID v4 Generator** - Random UUIDs
-  - RFC 4122 compliant
-  - Cryptographically secure (crypto/rand)
-  - Batch generation support
-  - 122 bits of randomness
+---
 
-- **UUID v7 Generator** - Time-ordered UUIDs
-  - RFC 9562 compliant (draft)
-  - 48-bit timestamp + 12-bit sequence + 62-bit random
-  - Monotonically increasing within same millisecond
-  - Thread-safe with mutex
-  - Better database index performance than UUID v4
-
-- **Placeholder structures for future implementations:**
-  - CUID (Collision-resistant Unique Identifier)
-  - ULID (Universally Unique Lexicographically Sortable ID)
-  - NanoID (Compact URL-safe ID)
-  - ShortID (Compressed UUID)
-  - KSUID (K-Sortable Unique Identifier)
-  - xid (MongoDB-like ObjectID)
-  - Sonyflake (Sony's Snowflake variant)
-
-### Documentation
-- Comprehensive README with comparison table
-- Usage examples for all implemented IDs
-- "When to use each ID type" guide
-- Visual format comparison
-- API documentation in code
-
-### Testing
-- 100% test coverage for implemented features
-- Concurrency tests
-- Uniqueness validation
-- Time-ordering validation
-- Benchmark tests included
-
-[1.0.0]: https://github.com/brmorillo/go-lib-id/releases/tag/v1.0.0
+*Note: This changelog will be automatically maintained by semantic-release going forward.*
