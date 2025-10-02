@@ -1,196 +1,512 @@
-name: Release with Binaries
+name: Releasename: Release with Binaries
 
-on:
-  push:
-    branches: [main]
+
+
+on:on:
+
+  push:  push:
+
+    branches: [ main ]    branches: [main]
+
   pull_request:
-    branches: [main]
 
-permissions:
+permissions:    branches: [main]
+
   contents: write
-  issues: write
-  pull-requests: write
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.21'
-          
-      - name: Cache Go modules
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-            
-      - name: Download dependencies
-        run: go mod download
-        
-      - name: Run tests
-        run: go test ./... -v -coverprofile=coverage.out
-        
-      - name: Check formatting
-        run: |
-          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
-            echo "Go code is not formatted properly:"
-            gofmt -s -l .
-            exit 1
-          fi
-          
-      - name: Run linter
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: latest
+  issues: writepermissions:
+
+  pull-requests: write  contents: write
+
+  issues: write
+
+jobs:  pull-requests: write
+
+  # Test first
+
+  test:jobs:
+
+    runs-on: ubuntu-latest  test:
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'    runs-on: ubuntu-latest
+
+    steps:    steps:
+
+      - name: Checkout      - uses: actions/checkout@v4
+
+        uses: actions/checkout@v4      
+
+              - name: Set up Go
+
+      - name: Set up Go        uses: actions/setup-go@v4
+
+        uses: actions/setup-go@v4        with:
+
+        with:          go-version: '1.21'
+
+          go-version: '1.21'          
+
+                - name: Cache Go modules
+
+      - name: Cache Go modules        uses: actions/cache@v3
+
+        uses: actions/cache@v3        with:
+
+        with:          path: |
+
+          path: ~/go/pkg/mod            ~/.cache/go-build
+
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}            ~/go/pkg/mod
+
+          restore-keys: |          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+
+            ${{ runner.os }}-go-          restore-keys: |
+
+                        ${{ runner.os }}-go-
+
+      - name: Install dependencies            
+
+        run: go mod download      - name: Download dependencies
+
+                run: go mod download
+
+      - name: Run tests        
+
+        run: go test -v -race -coverprofile=coverage.out ./...      - name: Run tests
+
+                run: go test ./... -v -coverprofile=coverage.out
+
+      - name: Check formatting        
+
+        run: |      - name: Check formatting
+
+          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then        run: |
+
+            echo "Code is not formatted. Run 'go fmt ./...'"          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+
+            gofmt -s -l .            echo "Go code is not formatted properly:"
+
+            exit 1            gofmt -s -l .
+
+          fi            exit 1
+
+                    fi
+
+      - name: Run linter          
+
+        uses: golangci/golangci-lint-action@v3      - name: Run linter
+
+        with:        uses: golangci/golangci-lint-action@v3
+
+          version: latest        with:
+
+          args: --timeout=5m          version: latest
+
           args: --timeout=5m
 
-  # Build binaries for multiple platforms
-  build:
-    needs: test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    strategy:
-      matrix:
-        include:
-          # Linux builds
-          - goos: linux
-            goarch: amd64
-            name: linux-amd64
-          - goos: linux
-            goarch: arm64
+  # Version determination - happens before build
+
+  version:  # Build binaries for multiple platforms
+
+    needs: test  build:
+
+    runs-on: ubuntu-latest    needs: test
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    outputs:    strategy:
+
+      new-release-published: ${{ steps.semantic-check.outputs.new-release-published }}      matrix:
+
+      new-release-version: ${{ steps.semantic-check.outputs.new-release-version }}        include:
+
+    steps:          # Linux builds
+
+      - name: Checkout          - goos: linux
+
+        uses: actions/checkout@v4            goarch: amd64
+
+        with:            name: linux-amd64
+
+          fetch-depth: 0          - goos: linux
+
+          token: ${{ secrets.GITHUB_TOKEN }}            goarch: arm64
+
             name: linux-arm64
-          - goos: linux
-            goarch: 386
-            name: linux-386
-          # Windows builds
+
+      - name: Set up Node.js          - goos: linux
+
+        uses: actions/setup-node@v4            goarch: 386
+
+        with:            name: linux-386
+
+          node-version: '20'          # Windows builds
+
+                    - goos: windows
+
+      - name: Install semantic-release            goarch: amd64
+
+        run: |            name: windows-amd64
+
+          npm install -g semantic-release@21 \            ext: .exe
+
+            @semantic-release/changelog@6 \          - goos: windows
+
+            @semantic-release/git@10 \            goarch: arm64
+
+            @semantic-release/github@9 \            name: windows-arm64
+
+            conventional-changelog-conventionalcommits@6            ext: .exe
+
           - goos: windows
-            goarch: amd64
-            name: windows-amd64
-            ext: .exe
-          - goos: windows
-            goarch: arm64
-            name: windows-arm64
-            ext: .exe
-          - goos: windows
-            goarch: 386
-            name: windows-386
-            ext: .exe
-          # macOS builds
-          - goos: darwin
-            goarch: amd64
-            name: macos-amd64
-          - goos: darwin
-            goarch: arm64
-            name: macos-arm64
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.21'
-          
-      - name: Get version
-        id: version
-        run: |
-          # For main branch, get version from semantic-release
-          VERSION=$(git describe --tags --always 2>/dev/null || echo "v0.0.0")
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "Building version: ${VERSION}"
-          
-      - name: Build basic example
+
+      - name: Check if new release needed            goarch: 386
+
+        id: semantic-check            name: windows-386
+
+        env:            ext: .exe
+
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          # macOS builds
+
+        run: |          - goos: darwin
+
+          # Run semantic-release in dry-run mode to check if new version is needed            goarch: amd64
+
+          echo "🔍 Checking if new release is needed..."            name: macos-amd64
+
+                    - goos: darwin
+
+          # Capture semantic-release dry run output            goarch: arm64
+
+          semantic-release --dry-run > semantic-dry-run.log 2>&1 || true            name: macos-arm64
+
+              runs-on: ubuntu-latest
+
+          # Display the output for debugging    steps:
+
+          echo "=== Semantic Release Dry Run Output ==="      - name: Checkout
+
+          cat semantic-dry-run.log        uses: actions/checkout@v4
+
+          echo "======================================="        
+
+                - name: Set up Go
+
+          # Check if new release would be published        uses: actions/setup-go@v4
+
+          if grep -q "The next release version is" semantic-dry-run.log; then        with:
+
+            echo "✅ New release will be published"          go-version: '1.21'
+
+            echo "new-release-published=true" >> $GITHUB_OUTPUT          
+
+                  - name: Get version
+
+            # Extract version        id: version
+
+            VERSION=$(grep "The next release version is" semantic-dry-run.log | sed 's/.*The next release version is \([0-9\.]*\).*/\1/')        run: |
+
+            echo "new-release-version=$VERSION" >> $GITHUB_OUTPUT          # For main branch, get version from semantic-release
+
+            echo "📦 Version will be: $VERSION"          VERSION=$(git describe --tags --always 2>/dev/null || echo "v0.0.0")
+
+          else          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+            echo "ℹ️ No new release needed - no significant changes"          echo "Building version: ${VERSION}"
+
+            echo "new-release-published=false" >> $GITHUB_OUTPUT          
+
+          fi      - name: Build basic example
+
         env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
-          CGO_ENABLED: 0
-        run: |
-          mkdir -p dist
-          BINARY_NAME="go-lib-id-basic-${{ matrix.name }}${{ matrix.ext }}"
-          echo "Building ${BINARY_NAME}..."
-          go build -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \
-            -o "dist/${BINARY_NAME}" \
-            ./examples/basic/
+
+  # Build binaries ONLY if there's a new version          GOOS: ${{ matrix.goos }}
+
+  build:          GOARCH: ${{ matrix.goarch }}
+
+    needs: version          CGO_ENABLED: 0
+
+    if: needs.version.outputs.new-release-published == 'true'        run: |
+
+    strategy:          mkdir -p dist
+
+      matrix:          BINARY_NAME="go-lib-id-basic-${{ matrix.name }}${{ matrix.ext }}"
+
+        include:          echo "Building ${BINARY_NAME}..."
+
+          # Linux builds          go build -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \
+
+          - goos: linux            -o "dist/${BINARY_NAME}" \
+
+            goarch: amd64            ./examples/basic/
+
+            name: linux-amd64          
+
+          - goos: linux      - name: Build capacity demo
+
+            goarch: arm64        env:
+
+            name: linux-arm64          GOOS: ${{ matrix.goos }}
+
+          - goos: linux          GOARCH: ${{ matrix.goarch }}
+
+            goarch: 386          CGO_ENABLED: 0
+
+            name: linux-386        run: |
+
+          # Windows builds          BINARY_NAME="go-lib-id-capacity-demo-${{ matrix.name }}${{ matrix.ext }}"
+
+          - goos: windows          echo "Building ${BINARY_NAME}..."
+
+            goarch: amd64          go build -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \
+
+            name: windows-amd64            -o "dist/${BINARY_NAME}" \
+
+            ext: .exe            ./examples/capacity-demo/
+
+          - goos: windows            
+
+            goarch: arm64      - name: Create README for binaries
+
+            name: windows-arm64        run: |
+
+            ext: .exe          cat > dist/README.md << 'EOF'
+
+          - goos: windows          # go-lib-id Binaries
+
+            goarch: 386          
+
+            name: windows-386          ## Examples Included
+
+            ext: .exe          
+
+          # macOS builds          - **go-lib-id-basic**: Demonstrates basic usage of the library
+
+          - goos: darwin          - **go-lib-id-capacity-demo**: Performance testing and capacity demonstration
+
+            goarch: amd64          
+
+            name: macos-amd64          ## Usage
+
+          - goos: darwin          
+
+            goarch: arm64          ### Linux/macOS:
+
+            name: macos-arm64          ```bash
+
+    runs-on: ubuntu-latest          chmod +x go-lib-id-*
+
+    steps:          ./go-lib-id-basic-*
+
+      - name: Checkout          ./go-lib-id-capacity-demo-*
+
+        uses: actions/checkout@v4          ```
+
+                  
+
+      - name: Set up Go          ### Windows:
+
+        uses: actions/setup-go@v4          ```cmd
+
+        with:          go-lib-id-basic-*.exe
+
+          go-version: '1.21'          go-lib-id-capacity-demo-*.exe
+
+                    ```
+
+      - name: Cache Go modules          
+
+        uses: actions/cache@v3          ## Library Usage
+
+        with:          
+
+          path: ~/go/pkg/mod          Add to your Go project:
+
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}          ```bash
+
+          restore-keys: |          go get github.com/brmorillo/go-lib-id
+
+            ${{ runner.os }}-go-          ```
+
+                      
+
+      - name: Install dependencies          For documentation visit: https://pkg.go.dev/github.com/brmorillo/go-lib-id
+
+        run: go mod download          EOF
+
+                    
+
+      - name: Set version for build      - name: Create package
+
+        id: build-version        run: |
+
+        run: |          cd dist
+
+          # Use the version determined by semantic-release          if [ "${{ matrix.goos }}" = "windows" ]; then
+
+          VERSION="v${{ needs.version.outputs.new-release-version }}"            # Create ZIP for Windows
+
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT            zip -r "../go-lib-id-${{ steps.version.outputs.version }}-${{ matrix.name }}.zip" .
+
+          echo "🏗️ Building version: ${VERSION} for ${{ matrix.goos }}/${{ matrix.goarch }}"          else
+
+                    # Create TAR.GZ for Unix systems
+
+      - name: Build binaries            tar -czf "../go-lib-id-${{ steps.version.outputs.version }}-${{ matrix.name }}.tar.gz" .
+
+        env:          fi
+
+          VERSION: ${{ steps.build-version.outputs.VERSION }}          
+
+          CGO_ENABLED: 0      - name: Upload artifacts
+
+          GOOS: ${{ matrix.goos }}        uses: actions/upload-artifact@v4
+
+          GOARCH: ${{ matrix.goarch }}        with:
+
+        run: |          name: binaries-${{ matrix.name }}
+
+          echo "Building for ${{ matrix.goos }}/${{ matrix.goarch }} - Version: ${VERSION}"          path: |
+
+          mkdir -p dist            go-lib-id-*.zip
+
+                      go-lib-id-*.tar.gz
+
+          # Build example binary
+
+          EXAMPLE_BINARY="go-lib-id-example-${{ matrix.name }}${{ matrix.ext }}"  # Semantic release for main branch only
+
+          echo "📦 Building ${EXAMPLE_BINARY}..."  release:
+
+          go build -ldflags="-s -w -X main.version=${VERSION}" \    needs: [test, build]
+
+            -o "dist/${EXAMPLE_BINARY}" \    runs-on: ubuntu-latest
+
+            ./cmd/example/    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+                steps:
+
+          # Build capacity-demo binary        - name: Checkout
+
+          DEMO_BINARY="go-lib-id-capacity-demo-${{ matrix.name }}${{ matrix.ext }}"        uses: actions/checkout@v4
+
+          echo "📦 Building ${DEMO_BINARY}..."        with:
+
+          go build -ldflags="-s -w -X main.version=${VERSION}" \          fetch-depth: 0
+
+            -o "dist/${DEMO_BINARY}" \          token: ${{ secrets.GITHUB_TOKEN }}
+
+            ./cmd/capacity-demo/
+
+                - name: Set up Node.js
+
+          echo "✅ Built binaries:"        uses: actions/setup-node@v4
+
+          ls -la dist/        with:
+
+                    node-version: '20'
+
+      - name: Create README for binaries          
+
+        run: |      - name: Install semantic-release
+
+          cat > dist/README.md << 'EOF'        run: |
+
+          # go-lib-id Binaries v${{ needs.version.outputs.new-release-version }}          npm install -g semantic-release@21 \
+
+                      @semantic-release/changelog@6 \
+
+          ## Examples Included            @semantic-release/git@10 \
+
+                      @semantic-release/github@9 \
+
+          - **go-lib-id-example**: Basic usage demonstration of the library            @semantic-release/exec@6 \
+
+          - **go-lib-id-capacity-demo**: Performance testing and capacity demonstration            conventional-changelog-conventionalcommits@6
+
           
-      - name: Build capacity demo
-        env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
-          CGO_ENABLED: 0
-        run: |
-          BINARY_NAME="go-lib-id-capacity-demo-${{ matrix.name }}${{ matrix.ext }}"
-          echo "Building ${BINARY_NAME}..."
-          go build -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \
-            -o "dist/${BINARY_NAME}" \
-            ./examples/capacity-demo/
-            
-      - name: Create README for binaries
-        run: |
-          cat > dist/README.md << 'EOF'
-          # go-lib-id Binaries
-          
-          ## Examples Included
-          
-          - **go-lib-id-basic**: Demonstrates basic usage of the library
-          - **go-lib-id-capacity-demo**: Performance testing and capacity demonstration
-          
-          ## Usage
-          
-          ### Linux/macOS:
-          ```bash
-          chmod +x go-lib-id-*
-          ./go-lib-id-basic-*
-          ./go-lib-id-capacity-demo-*
-          ```
-          
+
+          ## Usage      - name: Set up Go for release
+
+                  uses: actions/setup-go@v4
+
+          ### Linux/macOS:        with:
+
+          ```bash          go-version: '1.21'
+
+          chmod +x go-lib-id-*          
+
+          ./go-lib-id-example-${{ matrix.name }}      - name: Download all artifacts
+
+          ./go-lib-id-capacity-demo-${{ matrix.name }}        uses: actions/download-artifact@v4
+
+          ```        with:
+
+                    path: artifacts
+
           ### Windows:
-          ```cmd
-          go-lib-id-basic-*.exe
-          go-lib-id-capacity-demo-*.exe
-          ```
-          
-          ## Library Usage
-          
+
+          ```cmd      - name: Prepare release assets
+
+          go-lib-id-example-${{ matrix.name }}.exe        run: |
+
+          go-lib-id-capacity-demo-${{ matrix.name }}.exe          mkdir -p release-assets
+
+          ```          find artifacts -name "*.zip" -o -name "*.tar.gz" | while read file; do
+
+                      cp "$file" release-assets/
+
+          ## Library Usage          done
+
+                    ls -la release-assets/
+
           Add to your Go project:
-          ```bash
-          go get github.com/brmorillo/go-lib-id
-          ```
-          
+
+          ```bash      - name: Run semantic-release
+
+          go get github.com/brmorillo/go-lib-id@v${{ needs.version.outputs.new-release-version }}        env:
+
+          ```          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+                  run: semantic-release
           For documentation visit: https://pkg.go.dev/github.com/brmorillo/go-lib-id
           EOF
-            
-      - name: Create package
+          
+      - name: Create archive
         run: |
           cd dist
-          if [ "${{ matrix.goos }}" = "windows" ]; then
-            # Create ZIP for Windows
-            zip -r "../go-lib-id-${{ steps.version.outputs.version }}-${{ matrix.name }}.zip" .
+          # Create appropriate archive based on OS
+          if [[ "${{ matrix.goos }}" == "windows" ]]; then
+            # ZIP for Windows
+            zip -r ../go-lib-id-${{ matrix.name }}.zip . 
+            echo "📦 Created Windows ZIP archive"
           else
-            # Create TAR.GZ for Unix systems
-            tar -czf "../go-lib-id-${{ steps.version.outputs.version }}-${{ matrix.name }}.tar.gz" .
+            # TAR.GZ for Unix systems
+            tar -czf ../go-lib-id-${{ matrix.name }}.tar.gz .
+            echo "📦 Created Unix TAR.GZ archive"
           fi
+          cd ..
           
+          echo "✅ Created archive:"
+          if [[ "${{ matrix.goos }}" == "windows" ]]; then
+            ls -la *.zip
+          else
+            ls -la *.tar.gz
+          fi
+      
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: binaries-${{ matrix.name }}
           path: |
-            go-lib-id-*.zip
-            go-lib-id-*.tar.gz
+            *.zip
+            *.tar.gz
 
-  # Semantic release for main branch only
-  release:
-    needs: [test, build]
+  # Final release step - publish with binaries (ONLY after builds complete)
+  publish-release:
+    needs: [version, build]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: needs.version.outputs.new-release-published == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -209,7 +525,6 @@ jobs:
             @semantic-release/changelog@6 \
             @semantic-release/git@10 \
             @semantic-release/github@9 \
-            @semantic-release/exec@6 \
             conventional-changelog-conventionalcommits@6
 
       - name: Set up Go for release
@@ -217,20 +532,30 @@ jobs:
         with:
           go-version: '1.21'
           
-      - name: Download all artifacts
+      - name: Download all build artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
 
       - name: Prepare release assets
         run: |
+          echo "🎯 Preparing release assets..."
           mkdir -p release-assets
+          
+          # Copy all archives to release assets
           find artifacts -name "*.zip" -o -name "*.tar.gz" | while read file; do
-            cp "$file" release-assets/
+            filename=$(basename "$file")
+            cp "$file" "release-assets/$filename"
+            echo "📦 Added: $filename"
           done
+          
+          echo "✅ Release assets ready:"
           ls -la release-assets/
 
-      - name: Run semantic-release
+      - name: Run semantic-release (FINAL STEP)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release
+        run: |
+          echo "🚀 Publishing release v${{ needs.version.outputs.new-release-version }}..."
+          semantic-release
+          echo "✅ Release published successfully!"
