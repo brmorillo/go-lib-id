@@ -42,13 +42,13 @@
 ## 📊 ID Types Comparison
 
 | ID Type       | Size    | Sortable | Encoding | Best For                     | Status |
-|---------------|---------|----------|----------|------------------------------|--------|
-| **Snowflake** | 64-bit  | ✅       | Decimal  | Twitter-like distributed IDs | ✅     |
-| **UUID v4**   | 128-bit | ❌       | Hex      | Maximum uniqueness           | ✅     |
-| **UUID v7**   | 128-bit | ✅       | Hex      | Time-ordered UUIDs           | ✅     |
-| **ULID**      | 128-bit | ✅       | Base32   | URL-safe sorted IDs          | 🔄     |
-| **KSUID**     | 160-bit | ✅       | Base62   | K-sortable unique IDs        | 🔄     |
-| **NanoID**    | Custom  | ❌       | Base64   | Short URL-safe IDs           | 🔄     |
+| ------------- | ------- | -------- | -------- | ---------------------------- | ------ |
+| **Snowflake** | 64-bit  | ✅        | Decimal  | Twitter-like distributed IDs | ✅      |
+| **UUID v4**   | 128-bit | ❌        | Hex      | Maximum uniqueness           | ✅      |
+| **UUID v7**   | 128-bit | ✅        | Hex      | Time-ordered UUIDs           | ✅      |
+| **ULID**      | 128-bit | ✅        | Base32   | URL-safe sorted IDs          | 🔄      |
+| **KSUID**     | 160-bit | ✅        | Base62   | K-sortable unique IDs        | 🔄      |
+| **NanoID**    | Custom  | ❌        | Base64   | Short URL-safe IDs           | 🔄      |
 
 *✅ Available • 🔄 Coming Soon*
 [![Go Report Card](https://goreportcard.com/badge/github.com/brmorillo/go-lib-id)](https://goreportcard.com/report/github.com/brmorillo/go-lib-id)
@@ -347,14 +347,14 @@ BenchmarkConcurrentGeneration-8        50000000     25.5 ns/op    0 B/op    0 al
 
 ### When to Use Each ID Type
 
-| Use Case | Snowflake ❄️ | UUID v4 🎲 | UUID v7 ⏰ |
-|----------|-------------|-----------|-----------|
-| **Numeric IDs** | ✅ Perfect | ❌ Hex strings | ❌ Hex strings |
-| **Sortable** | ✅ Time-ordered | ❌ Random | ✅ Time-ordered |
-| **Performance** | ✅ Ultra-fast | ⚠️ Moderate | ⚠️ Moderate |
-| **Size** | ✅ 64-bit | ⚠️ 128-bit | ⚠️ 128-bit |
-| **Distributed** | ✅ Built-in | ✅ Natural | ✅ Natural |
-| **Setup** | ⚠️ Need coordination | ✅ Zero setup | ✅ Zero setup |
+| Use Case        | Snowflake ❄️         | UUID v4 🎲     | UUID v7 ⏰      |
+| --------------- | ------------------- | ------------- | -------------- |
+| **Numeric IDs** | ✅ Perfect           | ❌ Hex strings | ❌ Hex strings  |
+| **Sortable**    | ✅ Time-ordered      | ❌ Random      | ✅ Time-ordered |
+| **Performance** | ✅ Ultra-fast        | ⚠️ Moderate    | ⚠️ Moderate     |
+| **Size**        | ✅ 64-bit            | ⚠️ 128-bit     | ⚠️ 128-bit      |
+| **Distributed** | ✅ Built-in          | ✅ Natural     | ✅ Natural      |
+| **Setup**       | ⚠️ Need coordination | ✅ Zero setup  | ✅ Zero setup   |
 
 ## 🧪 Testing
 

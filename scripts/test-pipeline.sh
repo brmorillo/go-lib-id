@@ -2,6 +2,7 @@
 
 # NOTE: If you get a "Permission denied" error, run:
 #   chmod +x scripts/test-pipeline.sh
+
 # Script para testar a pipeline localmente antes de subir para o GitHub
 # Usage: ./scripts/test-pipeline.sh
 

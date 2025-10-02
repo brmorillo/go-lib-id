@@ -1,123 +1,206 @@
 {
-  "branches": [
-    "main"
-  ],
-  "plugins": [
-    [
-      "@semantic-release/commit-analyzer",
-      {
-        "preset": "conventionalcommits",
-        "releaseRules": [
-          { "type": "feat", "release": "minor" },
-          { "type": "fix", "release": "patch" },
-          { "type": "perf", "release": "patch" },
-          { "type": "revert", "release": "patch" },
-          { "type": "docs", "release": "patch" },
-          { "type": "style", "release": false },
-          { "type": "chore", "release": false },
-          { "type": "refactor", "release": "patch" },
-          { "type": "test", "release": false },
-          { "type": "build", "release": false },
-          { "type": "ci", "release": false },
-          { "scope": "no-release", "release": false },
-          { "breaking": true, "release": "major" }
-        ],
-        "parserOpts": {
-          "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES", "BREAKING"]
-        }
-      }
-    ],
-    [
-      "@semantic-release/release-notes-generator",
-      {
-        "preset": "conventionalcommits",
-        "presetConfig": {
-          "types": [
-            { "type": "feat", "section": "🚀 Features" },
-            { "type": "fix", "section": "🐛 Bug Fixes" },
-            { "type": "perf", "section": "⚡ Performance Improvements" },
-            { "type": "revert", "section": "⏪ Reverts" },
-            { "type": "docs", "section": "📚 Documentation" },
-            { "type": "refactor", "section": "♻️ Code Refactoring" },
-            { "type": "test", "section": "✅ Tests", "hidden": true },
-            { "type": "build", "section": "🏗️ Build System", "hidden": true },
-            { "type": "ci", "section": "👷 CI/CD", "hidden": true },
-            { "type": "chore", "section": "🔧 Maintenance", "hidden": true }
-          ]
-        }
-      }
-    ],
-    [
-      "@semantic-release/changelog",
-      {
-        "changelogFile": "CHANGELOG.md",
-        "changelogTitle": "# Changelog\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n"
-      }
-    ],
-    [
-      "@semantic-release/exec",
-      {
-        "prepareCmd": "echo 'Preparing release ${nextRelease.version}' && go mod tidy && make generate-changelog || true",
-        "publishCmd": "echo 'Publishing release ${nextRelease.version} with ${Object.keys(process.env).filter(key => key.startsWith('RELEASE_ASSET')).length} assets'"
-      }
-    ],
-    [
-      "@semantic-release/github",
-      {
-        "assets": [
-          {
-            "path": "release-assets/go-lib-id-*-windows-amd64.zip",
-            "label": "Windows x64",
-            "name": "go-lib-id-${nextRelease.version}-windows-amd64.zip"
-          },
-          {
-            "path": "release-assets/go-lib-id-*-windows-arm64.zip",
-            "label": "Windows ARM64",
-            "name": "go-lib-id-${nextRelease.version}-windows-arm64.zip"
-          },
-          {
-            "path": "release-assets/go-lib-id-*-windows-386.zip",
-            "label": "Windows x86",
-            "name": "go-lib-id-${nextRelease.version}-windows-386.zip"
-          },
-          {
-            "path": "release-assets/go-lib-id-*-macos-amd64.tar.gz",
-            "label": "macOS Intel",
-            "name": "go-lib-id-${nextRelease.version}-macos-amd64.tar.gz"
-          },
-          {
-            "path": "release-assets/go-lib-id-*-macos-arm64.tar.gz",
-            "label": "macOS Apple Silicon",
-            "name": "go-lib-id-${nextRelease.version}-macos-arm64.tar.gz"
-          },
-          {
-            "path": "release-assets/go-lib-id-*-linux-amd64.tar.gz",
-            "label": "Linux x64",
-            "name": "go-lib-id-${nextRelease.version}-linux-amd64.tar.gz"
-          },
-          {
-            "path": "release-assets/go-lib-id-*-linux-arm64.tar.gz",
-            "label": "Linux ARM64",
-            "name": "go-lib-id-${nextRelease.version}-linux-arm64.tar.gz"
-          },
-          {
-            "path": "release-assets/go-lib-id-*-linux-386.tar.gz",
-            "label": "Linux x86",
-            "name": "go-lib-id-${nextRelease.version}-linux-386.tar.gz"
-          }
-        ],
-        "discussionCategoryName": "Releases",
-        "releasedLabels": ["released"],
-        "addReleases": "bottom",
-        "successComment": "🎉 This ${issue.pull_request ? 'PR is included' : 'issue has been resolved'} in version [${nextRelease.version}](${releases.filter(release => release.name === 'GitHub release')[0].url}) 🎉"
-      }
-    ],
-    [
-      "@semantic-release/git",
-      {
-        "assets": ["CHANGELOG.md", "go.mod", "go.sum"],
-        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-      }
-    ]
-  ]
+   "branches": [
+      "main"
+   ],
+   "plugins": [
+      [
+         "@semantic-release/commit-analyzer",
+         {
+            "preset": "conventionalcommits",
+            "releaseRules": [
+               {
+                  "type": "feat",
+                  "release": "minor"
+               },
+               {
+                  "type": "fix",
+                  "release": "patch"
+               },
+               {
+                  "type": "perf",
+                  "release": "patch"
+               },
+               {
+                  "type": "revert",
+                  "release": "patch"
+               },
+               {
+                  "type": "docs",
+                  "release": "patch"
+               },
+               {
+                  "type": "style",
+                  "release": false
+               },
+               {
+                  "type": "chore",
+                  "release": false
+               },
+               {
+                  "type": "refactor",
+                  "release": "patch"
+               },
+               {
+                  "type": "test",
+                  "release": false
+               },
+               {
+                  "type": "build",
+                  "release": false
+               },
+               {
+                  "type": "ci",
+                  "release": false
+               },
+               {
+                  "scope": "no-release",
+                  "release": false
+               },
+               {
+                  "breaking": true,
+                  "release": "major"
+               }
+            ],
+            "parserOpts": {
+               "noteKeywords": [
+                  "BREAKING CHANGE",
+                  "BREAKING CHANGES",
+                  "BREAKING"
+               ]
+            }
+         }
+      ],
+      [
+         "@semantic-release/release-notes-generator",
+         {
+            "preset": "conventionalcommits",
+            "presetConfig": {
+               "types": [
+                  {
+                     "type": "feat",
+                     "section": "🚀 Features"
+                  },
+                  {
+                     "type": "fix",
+                     "section": "🐛 Bug Fixes"
+                  },
+                  {
+                     "type": "perf",
+                     "section": "⚡ Performance Improvements"
+                  },
+                  {
+                     "type": "revert",
+                     "section": "⏪ Reverts"
+                  },
+                  {
+                     "type": "docs",
+                     "section": "📚 Documentation"
+                  },
+                  {
+                     "type": "refactor",
+                     "section": "♻️ Code Refactoring"
+                  },
+                  {
+                     "type": "test",
+                     "section": "✅ Tests",
+                     "hidden": true
+                  },
+                  {
+                     "type": "build",
+                     "section": "🏗️ Build System",
+                     "hidden": true
+                  },
+                  {
+                     "type": "ci",
+                     "section": "👷 CI/CD",
+                     "hidden": true
+                  },
+                  {
+                     "type": "chore",
+                     "section": "🔧 Maintenance",
+                     "hidden": true
+                  }
+               ]
+            }
+         }
+      ],
+      [
+         "@semantic-release/changelog",
+         {
+            "changelogFile": "CHANGELOG.md",
+            "changelogTitle": "# Changelog\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n"
+         }
+      ],
+      [
+         "@semantic-release/exec",
+         {
+            "prepareCmd": "echo 'Preparing release ${nextRelease.version}' && go mod tidy && make generate-changelog || true",
+            "publishCmd": "echo 'Publishing release ${nextRelease.version} with ${Object.keys(process.env).filter(key => key.startsWith('RELEASE_ASSET')).length} assets'"
+         }
+      ],
+      [
+         "@semantic-release/github",
+         {
+            "assets": [
+               {
+                  "path": "release-assets/go-lib-id-*-windows-amd64.zip",
+                  "label": "Windows x64",
+                  "name": "go-lib-id-${nextRelease.version}-windows-amd64.zip"
+               },
+               {
+                  "path": "release-assets/go-lib-id-*-windows-arm64.zip",
+                  "label": "Windows ARM64",
+                  "name": "go-lib-id-${nextRelease.version}-windows-arm64.zip"
+               },
+               {
+                  "path": "release-assets/go-lib-id-*-windows-386.zip",
+                  "label": "Windows x86",
+                  "name": "go-lib-id-${nextRelease.version}-windows-386.zip"
+               },
+               {
+                  "path": "release-assets/go-lib-id-*-macos-amd64.tar.gz",
+                  "label": "macOS Intel",
+                  "name": "go-lib-id-${nextRelease.version}-macos-amd64.tar.gz"
+               },
+               {
+                  "path": "release-assets/go-lib-id-*-macos-arm64.tar.gz",
+                  "label": "macOS Apple Silicon",
+                  "name": "go-lib-id-${nextRelease.version}-macos-arm64.tar.gz"
+               },
+               {
+                  "path": "release-assets/go-lib-id-*-linux-amd64.tar.gz",
+                  "label": "Linux x64",
+                  "name": "go-lib-id-${nextRelease.version}-linux-amd64.tar.gz"
+               },
+               {
+                  "path": "release-assets/go-lib-id-*-linux-arm64.tar.gz",
+                  "label": "Linux ARM64",
+                  "name": "go-lib-id-${nextRelease.version}-linux-arm64.tar.gz"
+               },
+               {
+                  "path": "release-assets/go-lib-id-*-linux-386.tar.gz",
+                  "label": "Linux x86",
+                  "name": "go-lib-id-${nextRelease.version}-linux-386.tar.gz"
+               }
+            ],
+            "discussionCategoryName": "Releases",
+            "releasedLabels": [
+               "released"
+            ],
+            "addReleases": "bottom",
+            "successComment": "🎉 This ${issue.pull_request ? 'PR is included' : 'issue has been resolved'} in version [${nextRelease.version}](${releases.filter(release => release.name === 'GitHub release')[0].url}) 🎉"
+         }
+      ],
+      [
+         "@semantic-release/git",
+         {
+            "assets": [
+               "CHANGELOG.md",
+               "go.mod",
+               "go.sum"
+            ],
+            "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+         }
+      ]
+   ]
 }
