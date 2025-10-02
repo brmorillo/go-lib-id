@@ -44,14 +44,18 @@
 
 ## 📊 ID Types Comparison
 
-| ID Type       | Size    | Sortable | Encoding | Best For                     | Status |
-| ------------- | ------- | -------- | -------- | ---------------------------- | ------ |
-| **Snowflake** | 64-bit  | ✅        | Decimal  | Twitter-like distributed IDs | ✅      |
-| **UUID v4**   | 128-bit | ❌        | Hex      | Maximum uniqueness           | ✅      |
-| **UUID v7**   | 128-bit | ✅        | Hex      | Time-ordered UUIDs           | ✅      |
-| **ULID**      | 128-bit | ✅        | Base32   | URL-safe sorted IDs          | 🔄      |
-| **KSUID**     | 160-bit | ✅        | Base62   | K-sortable unique IDs        | 🔄      |
-| **NanoID**    | Custom  | ❌        | Base64   | Short URL-safe IDs           | 🔄      |
+| ID Type       | Size      | Sortable | Encoding | Best For                       | Status |
+| ------------- | --------- | -------- | -------- | ------------------------------ | ------ |
+| **Snowflake** | 64-bit    | ✅        | Decimal  | Numeric distributed IDs        | ✅      |
+| **UUID v4**   | 128-bit   | ❌        | Hex      | Maximum uniqueness             | ✅      |
+| **UUID v7**   | 128-bit   | ✅        | Hex      | Sortable UUID                  | ✅      |
+| **ULID**      | 128-bit   | ✅        | Base32   | URL-safe, case-insensitive     | 🔄      |
+| **KSUID**     | 160-bit   | ✅        | Base62   | Distributed, second-precision  | 🔄      |
+| **xid**       | 96-bit    | ✅        | Base32   | MongoDB-like                   | 🔄      |
+| **CUID**      | ~25 chars | ✅        | Base36   | Collision-resistant            | 🔄      |
+| **NanoID**    | 21 chars  | ❌        | Custom   | Short URLs                     | 🔄      |
+| **ShortID**   | 22 chars  | ❌        | Base62   | Compact UUID                   | 🔄      |
+| **Sonyflake** | 63-bit    | ✅        | Decimal  | Improved Snowflake (174 years) | 🔄      |
 
 *✅ Available • 🔄 Coming Soon*
 
