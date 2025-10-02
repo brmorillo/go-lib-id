@@ -1,4 +1,4 @@
-name: Release with Binariesname: Releasename: Release with Binaries
+name: Release with Binariesname: Release with Binariesname: Releasename: Release with Binaries
 
 
 
@@ -6,23 +6,23 @@ on:
 
   push:
 
-    branches: [main]on:on:
+    branches: [main]on:
 
 
 
-permissions:  push:  push:
+permissions:  push:
 
   contents: write
 
-  issues: write    branches: [ main ]    branches: [main]
+  issues: write    branches: [main]on:on:
 
   pull-requests: write
 
-  pull_request:
+
 
 jobs:
 
-  test:permissions:    branches: [main]
+  test:permissions:  push:  push:
 
     runs-on: ubuntu-latest
 
@@ -30,203 +30,431 @@ jobs:
 
       - uses: actions/checkout@v4
 
-        issues: writepermissions:
+        issues: write    branches: [ main ]    branches: [main]
 
       - name: Set up Go
 
-        uses: actions/setup-go@v4  pull-requests: write  contents: write
+        uses: actions/setup-go@v4  pull-requests: write
 
         with:
 
-          go-version: '1.21'  issues: write
+          go-version: '1.21'  pull_request:
 
           
 
-      - name: Cache Go modulesjobs:  pull-requests: write
+      - name: Cache Go modulesjobs:
 
         uses: actions/cache@v3
 
-        with:  # Test first
+        with:  test:permissions:    branches: [main]
 
           path: |
 
-            ~/.cache/go-build  test:jobs:
+            ~/.cache/go-build    runs-on: ubuntu-latest
 
             ~/go/pkg/mod
 
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}    runs-on: ubuntu-latest  test:
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}    steps:  contents: write
 
           restore-keys: |
 
-            ${{ runner.os }}-go-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'    runs-on: ubuntu-latest
+            ${{ runner.os }}-go-      - uses: actions/checkout@v4
 
             
 
-      - name: Download dependencies    steps:    steps:
+      - name: Download dependencies        issues: writepermissions:
 
         run: go mod download
 
-              - name: Checkout      - uses: actions/checkout@v4
+              - name: Set up Go
 
       - name: Run tests
 
-        run: go test ./... -v -coverprofile=coverage.out        uses: actions/checkout@v4      
+        run: go test ./... -v -coverprofile=coverage.out        uses: actions/setup-go@v4  pull-requests: write  contents: write
 
 
 
-      - name: Check formatting              - name: Set up Go
+      - name: Check formatting        with:
 
         run: |
 
-          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then      - name: Set up Go        uses: actions/setup-go@v4
+          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then          go-version: '1.21'  issues: write
 
             echo "Go code is not formatted properly:"
 
-            gofmt -s -l .        uses: actions/setup-go@v4        with:
+            gofmt -s -l .          
 
             exit 1
 
-          fi        with:          go-version: '1.21'
+          fi      - name: Cache Go modulesjobs:  pull-requests: write
 
           
 
-      - name: Run linter          go-version: '1.21'          
+      - name: Run linter        uses: actions/cache@v3
 
         uses: golangci/golangci-lint-action@v3
 
-        with:                - name: Cache Go modules
+        with:        with:  # Test first
 
           version: latest
 
-          args: --timeout=5m      - name: Cache Go modules        uses: actions/cache@v3
+          args: --timeout=5m          path: |
 
 
 
-  # Build binaries for multiple platforms        uses: actions/cache@v3        with:
+  build:            ~/.cache/go-build  test:jobs:
 
-  build:
+    needs: test
 
-    needs: test        with:          path: |
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'            ~/go/pkg/mod
 
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    strategy:
 
-    strategy:          path: ~/go/pkg/mod            ~/.cache/go-build
+      matrix:          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}    runs-on: ubuntu-latest  test:
 
-      matrix:
+        include:
 
-        include:          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}            ~/go/pkg/mod
-
-          # Linux builds
-
-          - goos: linux          restore-keys: |          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-
-            goarch: amd64
-
-            name: linux-amd64            ${{ runner.os }}-go-          restore-keys: |
+          # Linux builds          restore-keys: |
 
           - goos: linux
 
-            goarch: arm64                        ${{ runner.os }}-go-
+            goarch: amd64            ${{ runner.os }}-go-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'    runs-on: ubuntu-latest
 
-            name: linux-arm64
+            name: linux-amd64
 
-          - goos: linux      - name: Install dependencies            
+          - goos: linux            
 
-            goarch: 386
+            goarch: arm64
 
-            name: linux-386        run: go mod download      - name: Download dependencies
+            name: linux-arm64      - name: Download dependencies    steps:    steps:
 
-          # Windows builds
+          - goos: linux
 
-          - goos: windows                run: go mod download
+            goarch: 386        run: go mod download
+
+            name: linux-386
+
+          # Windows builds              - name: Checkout      - uses: actions/checkout@v4
+
+          - goos: windows
+
+            goarch: amd64      - name: Run tests
+
+            name: windows-amd64
+
+            ext: .exe        run: go test ./... -v -coverprofile=coverage.out        uses: actions/checkout@v4      
+
+          - goos: windows
+
+            goarch: arm64
+
+            name: windows-arm64
+
+            ext: .exe      - name: Check formatting              - name: Set up Go
+
+          - goos: windows
+
+            goarch: 386        run: |
+
+            name: windows-386
+
+            ext: .exe          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then      - name: Set up Go        uses: actions/setup-go@v4
+
+          # macOS builds
+
+          - goos: darwin            echo "Go code is not formatted properly:"
 
             goarch: amd64
 
-            name: windows-amd64      - name: Run tests        
-
-            ext: .exe
-
-          - goos: windows        run: go test -v -race -coverprofile=coverage.out ./...      - name: Run tests
-
-            goarch: arm64
-
-            name: windows-arm64                run: go test ./... -v -coverprofile=coverage.out
-
-            ext: .exe
-
-          - goos: windows      - name: Check formatting        
-
-            goarch: 386
-
-            name: windows-386        run: |      - name: Check formatting
-
-            ext: .exe
-
-          # macOS builds          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then        run: |
+            name: macos-amd64            gofmt -s -l .        uses: actions/setup-go@v4        with:
 
           - goos: darwin
 
-            goarch: amd64            echo "Code is not formatted. Run 'go fmt ./...'"          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+            goarch: arm64            exit 1
 
-            name: macos-amd64
+            name: macos-arm64
 
-          - goos: darwin            gofmt -s -l .            echo "Go code is not formatted properly:"
+    runs-on: ubuntu-latest          fi        with:          go-version: '1.21'
 
-            goarch: arm64
+    steps:
 
-            name: macos-arm64            exit 1            gofmt -s -l .
+      - name: Checkout          
 
-    runs-on: ubuntu-latest
+        uses: actions/checkout@v4
 
-    steps:          fi            exit 1
+              - name: Run linter          go-version: '1.21'          
 
-      - name: Checkout
+      - name: Set up Go
 
-        uses: actions/checkout@v4                    fi
+        uses: actions/setup-go@v4        uses: golangci/golangci-lint-action@v3
 
-        
+        with:
 
-      - name: Set up Go      - name: Run linter          
+          go-version: '1.21'        with:                - name: Cache Go modules
 
-        uses: actions/setup-go@v4
+          
 
-        with:        uses: golangci/golangci-lint-action@v3      - name: Run linter
+      - name: Get version          version: latest
 
-          go-version: '1.21'
+        id: version
 
-                  with:        uses: golangci/golangci-lint-action@v3
-
-      - name: Get version
-
-        id: version          version: latest        with:
-
-        run: |
-
-          # For main branch, get version from semantic-release          args: --timeout=5m          version: latest
+        run: |          args: --timeout=5m      - name: Cache Go modules        uses: actions/cache@v3
 
           VERSION=$(git describe --tags --always 2>/dev/null || echo "v0.0.0")
 
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT          args: --timeout=5m
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
           echo "Building version: ${VERSION}"
 
-            # Version determination - happens before build
+            # Build binaries for multiple platforms        uses: actions/cache@v3        with:
 
-      - name: Build basic example
+      - name: Build example binary
 
-        env:  version:  # Build binaries for multiple platforms
+        env:  build:
 
           GOOS: ${{ matrix.goos }}
 
-          GOARCH: ${{ matrix.goarch }}    needs: test  build:
+          GOARCH: ${{ matrix.goarch }}    needs: test        with:          path: |
 
           CGO_ENABLED: 0
 
-        run: |    runs-on: ubuntu-latest    needs: test
+        run: |    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
           mkdir -p dist
 
-          BINARY_NAME="go-lib-id-basic-${{ matrix.name }}${{ matrix.ext }}"    if: github.event_name == 'push' && github.ref == 'refs/heads/main'    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+          BINARY_NAME="go-lib-id-example-${{ matrix.name }}${{ matrix.ext }}"    strategy:          path: ~/go/pkg/mod            ~/.cache/go-build
+
+          echo "Building ${BINARY_NAME}..."
+
+          go build -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \      matrix:
+
+            -o "dist/${BINARY_NAME}" \
+
+            ./cmd/example/        include:          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}            ~/go/pkg/mod
+
+          
+
+      - name: Build capacity demo          # Linux builds
+
+        env:
+
+          GOOS: ${{ matrix.goos }}          - goos: linux          restore-keys: |          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+
+          GOARCH: ${{ matrix.goarch }}
+
+          CGO_ENABLED: 0            goarch: amd64
+
+        run: |
+
+          BINARY_NAME="go-lib-id-capacity-demo-${{ matrix.name }}${{ matrix.ext }}"            name: linux-amd64            ${{ runner.os }}-go-          restore-keys: |
+
+          echo "Building ${BINARY_NAME}..."
+
+          go build -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \          - goos: linux
+
+            -o "dist/${BINARY_NAME}" \
+
+            ./cmd/capacity-demo/            goarch: arm64                        ${{ runner.os }}-go-
+
+            
+
+      - name: Create README for binaries            name: linux-arm64
+
+        run: |
+
+          cat > dist/README.md << 'EOF'          - goos: linux      - name: Install dependencies            
+
+          # go-lib-id Binaries
+
+                      goarch: 386
+
+          ## Examples Included
+
+                      name: linux-386        run: go mod download      - name: Download dependencies
+
+          - **go-lib-id-example**: Basic usage demonstration of the library
+
+          - **go-lib-id-capacity-demo**: Performance testing and capacity demonstration          # Windows builds
+
+          
+
+          ## Usage          - goos: windows                run: go mod download
+
+          
+
+          ### Linux/macOS:            goarch: amd64
+
+          ```bash
+
+          chmod +x go-lib-id-*            name: windows-amd64      - name: Run tests        
+
+          ./go-lib-id-example-*
+
+          ./go-lib-id-capacity-demo-*            ext: .exe
+
+          ```
+
+                    - goos: windows        run: go test -v -race -coverprofile=coverage.out ./...      - name: Run tests
+
+          ### Windows:
+
+          ```cmd            goarch: arm64
+
+          go-lib-id-example-*.exe
+
+          go-lib-id-capacity-demo-*.exe            name: windows-arm64                run: go test ./... -v -coverprofile=coverage.out
+
+          ```
+
+                      ext: .exe
+
+          ## Library Usage
+
+                    - goos: windows      - name: Check formatting        
+
+          Add to your Go project:
+
+          ```bash            goarch: 386
+
+          go get github.com/brmorillo/go-lib-id
+
+          ```            name: windows-386        run: |      - name: Check formatting
+
+          
+
+          For documentation visit: https://pkg.go.dev/github.com/brmorillo/go-lib-id            ext: .exe
+
+          EOF
+
+                      # macOS builds          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then        run: |
+
+      - name: Create package
+
+        run: |          - goos: darwin
+
+          cd dist
+
+          if [ "${{ matrix.goos }}" = "windows" ]; then            goarch: amd64            echo "Code is not formatted. Run 'go fmt ./...'"          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+
+            zip -r "../go-lib-id-${{ steps.version.outputs.version }}-${{ matrix.name }}.zip" .
+
+          else            name: macos-amd64
+
+            tar -czf "../go-lib-id-${{ steps.version.outputs.version }}-${{ matrix.name }}.tar.gz" .
+
+          fi          - goos: darwin            gofmt -s -l .            echo "Go code is not formatted properly:"
+
+          
+
+      - name: Upload artifacts            goarch: arm64
+
+        uses: actions/upload-artifact@v4
+
+        with:            name: macos-arm64            exit 1            gofmt -s -l .
+
+          name: binaries-${{ matrix.name }}
+
+          path: |    runs-on: ubuntu-latest
+
+            go-lib-id-*.zip
+
+            go-lib-id-*.tar.gz    steps:          fi            exit 1
+
+
+
+  release:      - name: Checkout
+
+    needs: [test, build]
+
+    runs-on: ubuntu-latest        uses: actions/checkout@v4                    fi
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:        
+
+      - name: Checkout
+
+        uses: actions/checkout@v4      - name: Set up Go      - name: Run linter          
+
+        with:
+
+          fetch-depth: 0        uses: actions/setup-go@v4
+
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+        with:        uses: golangci/golangci-lint-action@v3      - name: Run linter
+
+      - name: Set up Node.js
+
+        uses: actions/setup-node@v4          go-version: '1.21'
+
+        with:
+
+          node-version: '20'                  with:        uses: golangci/golangci-lint-action@v3
+
+          
+
+      - name: Install semantic-release      - name: Get version
+
+        run: |
+
+          npm install -g semantic-release@21 \        id: version          version: latest        with:
+
+            @semantic-release/changelog@6 \
+
+            @semantic-release/git@10 \        run: |
+
+            @semantic-release/github@9 \
+
+            @semantic-release/exec@6 \          # For main branch, get version from semantic-release          args: --timeout=5m          version: latest
+
+            conventional-changelog-conventionalcommits@6
+
+          VERSION=$(git describe --tags --always 2>/dev/null || echo "v0.0.0")
+
+      - name: Set up Go for release
+
+        uses: actions/setup-go@v4          echo "version=${VERSION}" >> $GITHUB_OUTPUT          args: --timeout=5m
+
+        with:
+
+          go-version: '1.21'          echo "Building version: ${VERSION}"
+
+          
+
+      - name: Download all artifacts            # Version determination - happens before build
+
+        uses: actions/download-artifact@v4
+
+        with:      - name: Build basic example
+
+          path: artifacts
+
+        env:  version:  # Build binaries for multiple platforms
+
+      - name: Prepare release assets
+
+        run: |          GOOS: ${{ matrix.goos }}
+
+          mkdir -p release-assets
+
+          find artifacts -name "*.zip" -o -name "*.tar.gz" | while read file; do          GOARCH: ${{ matrix.goarch }}    needs: test  build:
+
+            cp "$file" release-assets/
+
+          done          CGO_ENABLED: 0
+
+          ls -la release-assets/
+
+        run: |    runs-on: ubuntu-latest    needs: test
+
+      - name: Run semantic-release
+
+        env:          mkdir -p dist
+
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        run: semantic-release          BINARY_NAME="go-lib-id-basic-${{ matrix.name }}${{ matrix.ext }}"    if: github.event_name == 'push' && github.ref == 'refs/heads/main'    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
           echo "Building ${BINARY_NAME}..."
 
