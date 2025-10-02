@@ -183,7 +183,6 @@
                   "name": "go-lib-id-${nextRelease.version}-linux-386.tar.gz"
                }
             ],
-            "discussionCategoryName": "Releases",
             "releasedLabels": [
                "released"
             ],
