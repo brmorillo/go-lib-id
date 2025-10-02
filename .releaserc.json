@@ -134,8 +134,8 @@
       [
          "@semantic-release/exec",
          {
-            "prepareCmd": "echo 'Preparing release ${nextRelease.version}' && go mod tidy && make generate-changelog || true",
-            "publishCmd": "echo 'Publishing release ${nextRelease.version} with ${Object.keys(process.env).filter(key => key.startsWith('RELEASE_ASSET')).length} assets'"
+            "prepareCmd": "echo 'Preparing release ${nextRelease.version}' && go mod tidy",
+            "publishCmd": "echo 'Publishing release ${nextRelease.version}'"
          }
       ],
       [
