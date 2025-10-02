@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.0.2](https://github.com/brmorillo/go-lib-id/compare/v1.0.1...v1.0.2) (2025-10-02)
+
+
+### 🐛 Bug Fixes
+
+* remove redundant make generate-changelog from prepareCmd ([b85f716](https://github.com/brmorillo/go-lib-id/commit/b85f716b0eca11ec8c0a802a7f0c6bd458c1f07b))
+
 ## [1.0.1](https://github.com/brmorillo/go-lib-id/compare/v1.0.0...v1.0.1) (2025-10-02)
 
 
