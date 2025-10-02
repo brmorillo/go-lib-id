@@ -209,7 +209,6 @@ jobs:
             @semantic-release/changelog@6 \
             @semantic-release/git@10 \
             @semantic-release/github@9 \
-            @semantic-release/exec@6 \
             conventional-changelog-conventionalcommits@6
 
       - name: Set up Go for release

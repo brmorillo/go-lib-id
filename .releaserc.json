@@ -1,73 +1,143 @@
-{
-   "branches": [
-      "main"
-   ],
-   "plugins": [
-      [
-         "@semantic-release/commit-analyzer",
-         {
-            "preset": "conventionalcommits",
-            "releaseRules": [
-               {
-                  "type": "feat",
-                  "release": "minor"
-               },
-               {
-                  "type": "fix",
-                  "release": "patch"
-               },
-               {
-                  "type": "perf",
-                  "release": "patch"
-               },
-               {
-                  "type": "revert",
-                  "release": "patch"
-               },
-               {
-                  "type": "docs",
-                  "release": "patch"
-               },
-               {
-                  "type": "style",
-                  "release": false
-               },
-               {
-                  "type": "chore",
-                  "release": false
-               },
-               {
-                  "type": "refactor",
-                  "release": "patch"
-               },
-               {
-                  "type": "test",
-                  "release": false
-               },
-               {
-                  "type": "build",
-                  "release": false
-               },
-               {
-                  "type": "ci",
-                  "release": false
-               },
-               {
-                  "scope": "no-release",
-                  "release": false
-               },
-               {
-                  "breaking": true,
-                  "release": "major"
-               }
-            ],
-            "parserOpts": {
-               "noteKeywords": [
-                  "BREAKING CHANGE",
-                  "BREAKING CHANGES",
-                  "BREAKING"
-               ]
-            }
+{{
+
+  "branches": ["main"],   "branches": [
+
+  "plugins": [      "main"
+
+    [   ],
+
+      "@semantic-release/commit-analyzer",   "plugins": [
+
+      {      [
+
+        "preset": "conventionalcommits",         "@semantic-release/commit-analyzer",
+
+        "releaseRules": [         {
+
+          {"type": "feat", "release": "minor"},            "preset": "conventionalcommits",
+
+          {"type": "fix", "release": "patch"},            "releaseRules": [
+
+          {"type": "perf", "release": "patch"},               {
+
+          {"type": "revert", "release": "patch"},                  "type": "feat",
+
+          {"type": "docs", "release": "patch"},                  "release": "minor"
+
+          {"type": "refactor", "release": "patch"},               },
+
+          {"type": "style", "release": false},               {
+
+          {"type": "chore", "release": false},                  "type": "fix",
+
+          {"type": "test", "release": false},                  "release": "patch"
+
+          {"type": "build", "release": false},               },
+
+          {"type": "ci", "release": false},               {
+
+          {"breaking": true, "release": "major"}                  "type": "perf",
+
+        ]                  "release": "patch"
+
+      }               },
+
+    ],               {
+
+    [                  "type": "revert",
+
+      "@semantic-release/release-notes-generator",                  "release": "patch"
+
+      {               },
+
+        "preset": "conventionalcommits",               {
+
+        "presetConfig": {                  "type": "docs",
+
+          "types": [                  "release": "patch"
+
+            {"type": "feat", "section": "🚀 Features"},               },
+
+            {"type": "fix", "section": "🐛 Bug Fixes"},               {
+
+            {"type": "perf", "section": "⚡ Performance Improvements"},                  "type": "style",
+
+            {"type": "revert", "section": "⏪ Reverts"},                  "release": false
+
+            {"type": "docs", "section": "📚 Documentation"},               },
+
+            {"type": "refactor", "section": "♻️ Code Refactoring"},               {
+
+            {"type": "test", "section": "✅ Tests", "hidden": true},                  "type": "chore",
+
+            {"type": "build", "section": "🏗️ Build System", "hidden": true},                  "release": false
+
+            {"type": "ci", "section": "👷 CI/CD", "hidden": true},               },
+
+            {"type": "chore", "section": "🔧 Maintenance", "hidden": true}               {
+
+          ]                  "type": "refactor",
+
+        }                  "release": "patch"
+
+      }               },
+
+    ],               {
+
+    [                  "type": "test",
+
+      "@semantic-release/changelog",                  "release": false
+
+      {               },
+
+        "changelogFile": "CHANGELOG.md",               {
+
+        "changelogTitle": "# Changelog\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n"                  "type": "build",
+
+      }                  "release": false
+
+    ],               },
+
+    [               {
+
+      "@semantic-release/github",                  "type": "ci",
+
+      {                  "release": false
+
+        "assets": [               },
+
+          {"path": "release-assets/*.zip", "label": "Windows Binaries"},               {
+
+          {"path": "release-assets/*.tar.gz", "label": "Linux/macOS Binaries"}                  "scope": "no-release",
+
+        ],                  "release": false
+
+        "releasedLabels": ["released"],               },
+
+        "addReleases": "bottom"               {
+
+      }                  "breaking": true,
+
+    ],                  "release": "major"
+
+    [               }
+
+      "@semantic-release/git",            ],
+
+      {            "parserOpts": {
+
+        "assets": ["CHANGELOG.md", "go.mod", "go.sum"],               "noteKeywords": [
+
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"                  "BREAKING CHANGE",
+
+      }                  "BREAKING CHANGES",
+
+    ]                  "BREAKING"
+
+  ]               ]
+
+}            }
+
          }
       ],
       [
