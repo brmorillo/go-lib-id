@@ -58,17 +58,17 @@ Pushes to `dev` branch create **pre-releases**:
 
 ### Types and Version Impact
 
-| Type | Description | Version Bump | Example |
-|------|-------------|--------------|---------|
-| `feat` | New feature | **MINOR** | `feat: add ULID support` |
-| `fix` | Bug fix | **PATCH** | `fix: resolve memory leak` |
-| `docs` | Documentation | **PATCH** | `docs: improve API examples` |
-| `refactor` | Code refactoring | **PATCH** | `refactor: simplify generator logic` |
-| `perf` | Performance improvement | **PATCH** | `perf: optimize ID generation` |
-| `test` | Tests | **NONE** | `test: add benchmark tests` |
-| `chore` | Maintenance | **NONE** | `chore: update dependencies` |
-| `ci` | CI/CD changes | **NONE** | `ci: add coverage reporting` |
-| `build` | Build system | **NONE** | `build: update Go version` |
+| Type       | Description             | Version Bump | Example                              |
+| ---------- | ----------------------- | ------------ | ------------------------------------ |
+| `feat`     | New feature             | **MINOR**    | `feat: add ULID support`             |
+| `fix`      | Bug fix                 | **PATCH**    | `fix: resolve memory leak`           |
+| `docs`     | Documentation           | **PATCH**    | `docs: improve API examples`         |
+| `refactor` | Code refactoring        | **PATCH**    | `refactor: simplify generator logic` |
+| `perf`     | Performance improvement | **PATCH**    | `perf: optimize ID generation`       |
+| `test`     | Tests                   | **NONE**     | `test: add benchmark tests`          |
+| `chore`    | Maintenance             | **NONE**     | `chore: update dependencies`         |
+| `ci`       | CI/CD changes           | **NONE**     | `ci: add coverage reporting`         |
+| `build`    | Build system            | **NONE**     | `build: update Go version`           |
 
 ### Breaking Changes (MAJOR bump)
 
