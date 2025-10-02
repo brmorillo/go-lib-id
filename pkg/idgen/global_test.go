@@ -150,7 +150,7 @@ func TestGetDefaultGenerator(t *testing.T) {
 
 // Benchmarks
 func BenchmarkGenerateSnowflakeGlobal(b *testing.B) {
-	SetDefaultMachineID(1, 1)
+	_ = SetDefaultMachineID(1, 1)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		GenerateSnowflake()
@@ -158,7 +158,7 @@ func BenchmarkGenerateSnowflakeGlobal(b *testing.B) {
 }
 
 func BenchmarkGenerateSnowflakeGlobalParallel(b *testing.B) {
-	SetDefaultMachineID(2, 2)
+	_ = SetDefaultMachineID(2, 2)
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {

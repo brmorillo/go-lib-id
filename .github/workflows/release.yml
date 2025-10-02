@@ -20,7 +20,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.25.1'
+          go-version: '1.21'
           
       - name: Cache Go modules
         uses: actions/cache@v3
@@ -97,7 +97,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.25.1'
+          go-version: '1.21'
           
       - name: Get version
         id: version
@@ -215,7 +215,7 @@ jobs:
       - name: Set up Go for release
         uses: actions/setup-go@v4
         with:
-          go-version: '1.25.1'
+          go-version: '1.21'
           
       - name: Download all artifacts
         uses: actions/download-artifact@v3

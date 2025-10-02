@@ -320,4 +320,8 @@ release: lint test ## Create release (automated versioning)
 ci: lint test bench check-commits ## CI checks with commit validation
 	@echo "✓ CI passed"
 
+test-pipeline: ## Test the full pipeline locally before pushing
+	@echo "🚀 Testing pipeline locally..."
+	@./scripts/test-pipeline.sh
+
 .DEFAULT_GOAL := help
