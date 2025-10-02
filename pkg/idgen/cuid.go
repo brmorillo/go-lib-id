@@ -1,7 +1,7 @@
 package idgen
 
 // CUID (Collision-resistant Unique Identifier)
-// 
+//
 // CUID is designed to be:
 // - Collision-resistant
 // - Horizontally scalable

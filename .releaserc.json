@@ -62,8 +62,8 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "echo 'Preparing release ${nextRelease.version}' && go mod tidy",
-        "publishCmd": "echo 'Publishing release ${nextRelease.version}'"
+        "prepareCmd": "echo 'Preparing release ${nextRelease.version}' && go mod tidy && make generate-changelog || true",
+        "publishCmd": "echo 'Publishing release ${nextRelease.version} with ${Object.keys(process.env).filter(key => key.startsWith('RELEASE_ASSET')).length} assets'"
       }
     ],
     [
@@ -71,12 +71,50 @@
       {
         "assets": [
           {
-            "path": "bin/*",
-            "label": "Compiled binaries"
+            "path": "release-assets/go-lib-id-*-windows-amd64.zip",
+            "label": "Windows x64",
+            "name": "go-lib-id-${nextRelease.version}-windows-amd64.zip"
+          },
+          {
+            "path": "release-assets/go-lib-id-*-windows-arm64.zip",
+            "label": "Windows ARM64",
+            "name": "go-lib-id-${nextRelease.version}-windows-arm64.zip"
+          },
+          {
+            "path": "release-assets/go-lib-id-*-windows-386.zip",
+            "label": "Windows x86",
+            "name": "go-lib-id-${nextRelease.version}-windows-386.zip"
+          },
+          {
+            "path": "release-assets/go-lib-id-*-macos-amd64.tar.gz",
+            "label": "macOS Intel",
+            "name": "go-lib-id-${nextRelease.version}-macos-amd64.tar.gz"
+          },
+          {
+            "path": "release-assets/go-lib-id-*-macos-arm64.tar.gz",
+            "label": "macOS Apple Silicon",
+            "name": "go-lib-id-${nextRelease.version}-macos-arm64.tar.gz"
+          },
+          {
+            "path": "release-assets/go-lib-id-*-linux-amd64.tar.gz",
+            "label": "Linux x64",
+            "name": "go-lib-id-${nextRelease.version}-linux-amd64.tar.gz"
+          },
+          {
+            "path": "release-assets/go-lib-id-*-linux-arm64.tar.gz",
+            "label": "Linux ARM64",
+            "name": "go-lib-id-${nextRelease.version}-linux-arm64.tar.gz"
+          },
+          {
+            "path": "release-assets/go-lib-id-*-linux-386.tar.gz",
+            "label": "Linux x86",
+            "name": "go-lib-id-${nextRelease.version}-linux-386.tar.gz"
           }
         ],
         "discussionCategoryName": "Releases",
-        "releasedLabels": ["released"]
+        "releasedLabels": ["released"],
+        "addReleases": "bottom",
+        "successComment": "🎉 This ${issue.pull_request ? 'PR is included' : 'issue has been resolved'} in version [${nextRelease.version}](${releases.filter(release => release.name === 'GitHub release')[0].url}) 🎉"
       }
     ],
     [

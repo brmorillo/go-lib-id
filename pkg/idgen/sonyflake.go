@@ -43,6 +43,7 @@ func NewSonyflake(machineID uint16) (*SonyflakeGenerator, error) {
 // Generate creates a new Sonyflake ID
 // TODO: Implement Sonyflake generation
 func (s *SonyflakeGenerator) Generate() (int64, error) {
+	_ = s.machineID // temporary usage to avoid unused field error
 	return 0, ErrSonyflakeNotImplemented
 }
 

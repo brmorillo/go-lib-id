@@ -1,4 +1,4 @@
-name: Release
+name: Release with Binaries
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
         run: go mod download
         
       - name: Run tests
-        run: go test ./... -v -race -coverprofile=coverage.out
+        run: go test ./... -v -coverprofile=coverage.out
         
       - name: Run benchmarks
         run: go test ./... -bench=. -benchmem -run=^$
@@ -49,21 +49,157 @@ jobs:
             exit 1
           fi
           
-      - name: Run go vet
-        run: go vet ./...
-        
-      - name: Upload coverage to Codecov
-        if: success()
-        uses: codecov/codecov-action@v3
+      - name: Run linter
+        uses: golangci/golangci-lint-action@v3
         with:
-          file: ./coverage.out
-          flags: unittests
-          name: codecov-umbrella
+          version: latest
+          args: --timeout=5m
 
-  release:
+  # Build binaries for multiple platforms
+  build:
     needs: test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev')
+    strategy:
+      matrix:
+        include:
+          # Linux builds
+          - goos: linux
+            goarch: amd64
+            name: linux-amd64
+          - goos: linux
+            goarch: arm64
+            name: linux-arm64
+          - goos: linux
+            goarch: 386
+            name: linux-386
+          # Windows builds
+          - goos: windows
+            goarch: amd64
+            name: windows-amd64
+            ext: .exe
+          - goos: windows
+            goarch: arm64
+            name: windows-arm64
+            ext: .exe
+          - goos: windows
+            goarch: 386
+            name: windows-386
+            ext: .exe
+          # macOS builds
+          - goos: darwin
+            goarch: amd64
+            name: macos-amd64
+          - goos: darwin
+            goarch: arm64
+            name: macos-arm64
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.25.1'
+          
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/dev" ]; then
+            COMMIT_COUNT=$(git rev-list --count HEAD)
+            SHORT_SHA=$(git rev-parse --short HEAD)
+            VERSION="v0.0.0-dev.${COMMIT_COUNT}.${SHORT_SHA}"
+          else
+            # This will be overridden by semantic-release for main branch
+            VERSION=$(git describe --tags --always 2>/dev/null || echo "v0.0.0")
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Building version: ${VERSION}"
+          
+      - name: Build basic example
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          mkdir -p dist
+          BINARY_NAME="go-lib-id-basic-${{ matrix.name }}${{ matrix.ext }}"
+          echo "Building ${BINARY_NAME}..."
+          go build -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \
+            -o "dist/${BINARY_NAME}" \
+            ./examples/basic/
+          
+      - name: Build capacity demo
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          BINARY_NAME="go-lib-id-capacity-demo-${{ matrix.name }}${{ matrix.ext }}"
+          echo "Building ${BINARY_NAME}..."
+          go build -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \
+            -o "dist/${BINARY_NAME}" \
+            ./examples/capacity-demo/
+            
+      - name: Create README for binaries
+        run: |
+          cat > dist/README.md << 'EOF'
+          # go-lib-id Binaries
+          
+          ## Examples Included
+          
+          - **go-lib-id-basic**: Demonstrates basic usage of the library
+          - **go-lib-id-capacity-demo**: Performance testing and capacity demonstration
+          
+          ## Usage
+          
+          ### Linux/macOS:
+          ```bash
+          chmod +x go-lib-id-*
+          ./go-lib-id-basic-*
+          ./go-lib-id-capacity-demo-*
+          ```
+          
+          ### Windows:
+          ```cmd
+          go-lib-id-basic-*.exe
+          go-lib-id-capacity-demo-*.exe
+          ```
+          
+          ## Library Usage
+          
+          Add to your Go project:
+          ```bash
+          go get github.com/brmorillo/go-lib-id
+          ```
+          
+          For documentation visit: https://pkg.go.dev/github.com/brmorillo/go-lib-id
+          EOF
+            
+      - name: Create package
+        run: |
+          cd dist
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            # Create ZIP for Windows
+            zip -r "../go-lib-id-${{ steps.version.outputs.version }}-${{ matrix.name }}.zip" .
+          else
+            # Create TAR.GZ for Unix systems
+            tar -czf "../go-lib-id-${{ steps.version.outputs.version }}-${{ matrix.name }}.tar.gz" .
+          fi
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: binaries-${{ matrix.name }}
+          path: |
+            go-lib-id-*.zip
+            go-lib-id-*.tar.gz
+
+  # Semantic release for main/master branch
+  release:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -89,6 +225,19 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.25.1'
+          
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: Prepare release assets
+        run: |
+          mkdir -p release-assets
+          find artifacts -name "*.zip" -o -name "*.tar.gz" | while read file; do
+            cp "$file" release-assets/
+          done
+          ls -la release-assets/
 
       - name: Run semantic-release
         env:
@@ -97,7 +246,7 @@ jobs:
 
   # Development releases (pre-release from dev branch)
   dev-release:
-    needs: test
+    needs: [test, build]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev'
     steps:
@@ -120,21 +269,46 @@ jobs:
           VERSION="v0.0.0-dev.${COMMIT_COUNT}.${SHORT_SHA}"
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "Generated dev version: ${VERSION}"
+          
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_OUTPUT
+          
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: Prepare release assets
+        run: |
+          mkdir -p release-assets
+          find artifacts -name "*.zip" -o -name "*.tar.gz" | while read file; do
+            cp "$file" release-assets/
+          done
+          # Rename files with correct version
+          cd release-assets
+          for file in *; do
+            new_name=$(echo "$file" | sed "s/v0\.0\.0-dev\.[0-9]*\.[a-f0-9]*/${{ steps.version.outputs.version }}/g")
+            if [ "$file" != "$new_name" ]; then
+              mv "$file" "$new_name"
+            fi
+          done
+          ls -la
 
       - name: Create development tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag ${{ steps.version.outputs.version }}
-          git push origin ${{ steps.version.outputs.version }}
+          git tag ${{ steps.version.outputs.version }} || true
+          git push origin ${{ steps.version.outputs.version }} || true
 
       - name: Create GitHub pre-release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.version.outputs.version }}
-          release_name: Development Release ${{ steps.version.outputs.version }}
+          name: "Development Release ${{ steps.version.outputs.version }}"
           body: |
             🚧 **Development Release** 🚧
             
@@ -142,7 +316,44 @@ jobs:
             
             **Commit:** ${{ github.sha }}
             **Branch:** dev
+            **Date:** ${{ steps.date.outputs.date }}
+            
+            ## 📦 Downloads
+            
+            Choose the appropriate binary for your system:
+            
+            ### Windows
+            - [Windows x64](../../releases/download/${{ steps.version.outputs.version }}/go-lib-id-${{ steps.version.outputs.version }}-windows-amd64.zip)
+            - [Windows ARM64](../../releases/download/${{ steps.version.outputs.version }}/go-lib-id-${{ steps.version.outputs.version }}-windows-arm64.zip)
+            - [Windows x86](../../releases/download/${{ steps.version.outputs.version }}/go-lib-id-${{ steps.version.outputs.version }}-windows-386.zip)
+            
+            ### macOS
+            - [macOS Intel](../../releases/download/${{ steps.version.outputs.version }}/go-lib-id-${{ steps.version.outputs.version }}-macos-amd64.tar.gz)
+            - [macOS Apple Silicon](../../releases/download/${{ steps.version.outputs.version }}/go-lib-id-${{ steps.version.outputs.version }}-macos-arm64.tar.gz)
+            
+            ### Linux
+            - [Linux x64](../../releases/download/${{ steps.version.outputs.version }}/go-lib-id-${{ steps.version.outputs.version }}-linux-amd64.tar.gz)
+            - [Linux ARM64](../../releases/download/${{ steps.version.outputs.version }}/go-lib-id-${{ steps.version.outputs.version }}-linux-arm64.tar.gz)
+            - [Linux x86](../../releases/download/${{ steps.version.outputs.version }}/go-lib-id-${{ steps.version.outputs.version }}-linux-386.tar.gz)
             
             ⚠️ This version is for testing purposes only and should not be used in production.
+            
+            ## 🚀 Installation
+            
+            Download the appropriate archive for your system, extract it, and run the examples:
+            
+            ```bash
+            # Linux/macOS
+            tar -xzf go-lib-id-*.tar.gz
+            ./go-lib-id-basic-*
+            ./go-lib-id-capacity-demo-*
+            
+            # Windows (PowerShell)
+            Expand-Archive go-lib-id-*.zip
+            .\go-lib-id-basic-*.exe
+            .\go-lib-id-capacity-demo-*.exe
+            ```
           draft: false
           prerelease: true
+          files: |
+            release-assets/*

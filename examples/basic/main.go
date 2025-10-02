@@ -7,9 +7,14 @@ import (
 	"github.com/brmorillo/go-lib-id/pkg/idgen"
 )
 
+// Version information (injected at build time)
+var version = "dev"
+
 func main() {
 	fmt.Println("🆔 go-lib-id - Snowflake ID Generator Demo")
 	fmt.Println("==========================================")
+	fmt.Printf("   Version: %s\n", version)
+	fmt.Printf("   Library: github.com/brmorillo/go-lib-id\n")
 	fmt.Println()
 
 	// 1. Create generator with specific ProcessID and WorkerID

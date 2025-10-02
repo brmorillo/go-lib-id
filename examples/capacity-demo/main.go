@@ -7,9 +7,14 @@ import (
 	"github.com/brmorillo/go-lib-id/pkg/idgen"
 )
 
+// Version information (injected at build time)
+var version = "dev"
+
 func main() {
 	fmt.Println("🔢 Capacity Demonstration - Snowflake ID")
 	fmt.Println("=========================================")
+	fmt.Printf("   Version: %s\n", version)
+	fmt.Printf("   Library: github.com/brmorillo/go-lib-id\n")
 	fmt.Println()
 
 	// 1. Test how many IDs we can generate in 1 millisecond
