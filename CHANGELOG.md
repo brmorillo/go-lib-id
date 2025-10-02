@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.0.3](https://github.com/brmorillo/go-lib-id/compare/v1.0.2...v1.0.3) (2025-10-02)
+
+
+### 📚 Documentation
+
+* improve README header with better layout and organized badges ([26cf92f](https://github.com/brmorillo/go-lib-id/commit/26cf92f151939aae252d81049e58379ab8eab01f))
+* restore complete ID types comparison table with all formats ([2489874](https://github.com/brmorillo/go-lib-id/commit/2489874a34f6ceb191ab7f9fc541db74444e2543))
+
 ## [1.0.2](https://github.com/brmorillo/go-lib-id/compare/v1.0.1...v1.0.2) (2025-10-02)
 
 
