@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.0.1](https://github.com/brmorillo/go-lib-id/compare/v1.0.0...v1.0.1) (2025-10-02)
+
+
+### 🐛 Bug Fixes
+
+* remove discussionCategoryName from release config (discussions not enabled) ([8121ba7](https://github.com/brmorillo/go-lib-id/commit/8121ba75d646455bf3a8b5a9f457427c3e2aa64f))
+
 ## 1.0.0 (2025-10-02)
 
 
