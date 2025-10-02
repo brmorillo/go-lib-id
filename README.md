@@ -1,28 +1,31 @@
-# go-lib-id
+<div align="center">
 
 # 🆔 go-lib-id
 
-<div align="center">
+### Professional Go Library for Distributed ID Generation
+
+*Production-ready • High-performance • Thread-safe • Zero dependencies*
+
+---
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/brmorillo/go-lib-id.svg)](https://pkg.go.dev/github.com/brmorillo/go-lib-id)
 [![Go Report Card](https://goreportcard.com/badge/github.com/brmorillo/go-lib-id)](https://goreportcard.com/report/github.com/brmorillo/go-lib-id)
-[![CI](https://github.com/brmorillo/go-lib-id/actions/workflows/ci.yml/badge.svg)](https://github.com/brmorillo/go-lib-id/actions/workflows/ci.yml)
-[![Release](https://github.com/brmorillo/go-lib-id/actions/workflows/release.yml/badge.svg)](https://github.com/brmorillo/go-lib-id/actions/workflows/release.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Go Version](https://img.shields.io/github/go-mod/go-version/brmorillo/go-lib-id)](https://go.dev/)
-[![GitHub release](https://img.shields.io/github/v/release/brmorillo/go-lib-id)](https://github.com/brmorillo/go-lib-id/releases)
-[![Coverage](https://img.shields.io/badge/coverage-72.2%25-brightgreen)](https://github.com/brmorillo/go-lib-id)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/brmorillo/go-lib-id?color=00ADD8&logo=go)](https://go.dev/)
+[![GitHub release](https://img.shields.io/github/v/release/brmorillo/go-lib-id?color=blue&logo=github)](https://github.com/brmorillo/go-lib-id/releases/latest)
 
-**Professional Go library for generating unique and distributed IDs in production systems**
+[![CI Workflow](https://github.com/brmorillo/go-lib-id/actions/workflows/dev-ci.yml/badge.svg)](https://github.com/brmorillo/go-lib-id/actions/workflows/dev-ci.yml)
+[![Release Workflow](https://github.com/brmorillo/go-lib-id/actions/workflows/release.yml/badge.svg)](https://github.com/brmorillo/go-lib-id/actions/workflows/release.yml)
+[![Coverage](https://img.shields.io/badge/coverage-72.2%25-brightgreen?logo=codecov)](https://github.com/brmorillo/go-lib-id)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?logo=opensourceinitiative&logoColor=white)](LICENSE)
 
-*High-performance • Thread-safe • Production-ready • Zero dependencies*
+---
 
-[Installation](#-installation) •
-[Quick Start](#-quick-start) •
-[Documentation](#-documentation) •
-[Examples](#-examples) •
-[Performance](#-performance) •
-[Contributing](#-contributing)
+[📦 Installation](#-installation) •
+[⚡ Quick Start](#-quick-start) •
+[📖 Documentation](#-documentation) •
+[🎯 Examples](#-examples) •
+[🚀 Performance](#-performance) •
+[🤝 Contributing](#-contributing)
 
 </div>
 
@@ -51,31 +54,6 @@
 | **NanoID**    | Custom  | ❌        | Base64   | Short URL-safe IDs           | 🔄      |
 
 *✅ Available • 🔄 Coming Soon*
-[![Go Report Card](https://goreportcard.com/badge/github.com/brmorillo/go-lib-id)](https://goreportcard.com/report/github.com/brmorillo/go-lib-id)
-[![CI](https://github.com/brmorillo/go-lib-id/actions/workflows/ci.yml/badge.svg)](https://github.com/brmorillo/go-lib-id/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Go Version](https://img.shields.io/github/go-mod/go-version/brmorillo/go-lib-id)](https://go.dev/)
-
-🆔 Go library for generating unique and distributed IDs
-
-## 📋 About
-
-Complete library for generating different types of IDs for distributed systems, with support for multiple formats and unique identification strategies.
-
-## 📊 ID Comparison
-
-| ID Type       | Size      | Sortable | Encoding | Best For                       | Implemented |
-| ------------- | --------- | -------- | -------- | ------------------------------ | ----------- |
-| **Snowflake** | 64-bit    | ✅        | Decimal  | Numeric distributed IDs        | 🟢           |
-| **UUID v4**   | 128-bit   | ❌        | Hex      | Maximum uniqueness             | 🟢           |
-| **UUID v7**   | 128-bit   | ✅        | Hex      | Sortable UUID                  | 🟢           |
-| **ULID**      | 128-bit   | ✅        | Base32   | URL-safe, case-insensitive     | 🔴           |
-| **KSUID**     | 160-bit   | ✅        | Base62   | Distributed, second-precision  | 🔴           |
-| **xid**       | 96-bit    | ✅        | Base32   | MongoDB-like                   | 🔴           |
-| **CUID**      | ~25 chars | ✅        | Base36   | Collision-resistant            | 🔴           |
-| **NanoID**    | 21 chars  | ❌        | Custom   | Short URLs                     | 🔴           |
-| **ShortID**   | 22 chars  | ❌        | Base62   | Compact UUID                   | 🔴           |
-| **Sonyflake** | 63-bit    | ✅        | Decimal  | Improved Snowflake (174 years) | �           |
 
 ## 🚀 Installation
 
